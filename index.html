@@ -69,7 +69,25 @@ footer{text-align:center;margin-top:32px;color:var(--gold);font-size:11px;font-w
   <p class="sub">SNSで本当に目に止まる画像か確認しよう</p>
 </div>
 
-<div id="upload-section">
+<div id="api-section" class="card" style="margin-bottom:20px;background:linear-gradient(135deg,#FAF0DD,#F5EDD8)">
+  <div style="text-align:center;margin-bottom:16px">
+    <div style="font-size:24px;margin-bottom:6px">🔑</div>
+    <div style="font-weight:800;font-size:16px;color:#4A3728;margin-bottom:4px">APIキーを入力してください</div>
+    <div style="font-size:12px;color:#A07840;line-height:1.7">Anthropic APIキーを入力すると無料で使えます<br>キーはこのページのみで使用され、保存されません</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:10px">
+    <input id="api-key-input" type="password" placeholder="sk-ant-api03-..." 
+      style="flex:1;padding:12px 16px;border:1.5px solid #E2C97E;border-radius:99px;font-family:inherit;font-size:13px;background:#FFFCF5;color:#4A3728;outline:none">
+    <button onclick="saveKey()" style="padding:12px 20px;border-radius:99px;background:linear-gradient(135deg,#C9A96E,#A07840);color:#fff;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">決定</button>
+  </div>
+  <div id="key-ok" style="display:none;text-align:center;font-size:12px;font-weight:700;color:#3A8A5A">✅ APIキーが設定されました！画像をアップロードしてください</div>
+  <div style="text-align:center;margin-top:10px">
+    <a href="https://console.anthropic.com/settings/keys" target="_blank" 
+      style="font-size:11px;color:#A07840;text-decoration:underline">APIキーの取得はこちら →</a>
+  </div>
+</div>
+
+<div id="upload-section" style="display:none">
   <div class="drop-zone card" id="drop-zone" onclick="document.getElementById('file-input').click()">
     <div style="font-size:40px;margin-bottom:10px">🖼️</div>
     <h2 style="font-size:15px;font-weight:700;margin-bottom:4px">チェックしたい画像をここにドロップ</h2>
@@ -180,7 +198,19 @@ footer{text-align:center;margin-top:32px;color:var(--gold);font-size:11px;font-w
 </div>
 
 <script>
-let b64='', mime='image/jpeg';
+let b64='', mime='image/jpeg', userApiKey='';
+
+function saveKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key || !key.startsWith('sk-')) {
+    alert('正しいAPIキーを入力してください（sk-ant-api...から始まる文字列）');
+    return;
+  }
+  userApiKey = key;
+  document.getElementById('key-ok').style.display = 'block';
+  document.getElementById('upload-section').style.display = 'block';
+}
+
 
 const dz = document.getElementById('drop-zone');
 document.getElementById('file-input').addEventListener('change', e => {
@@ -249,23 +279,39 @@ function getGrade(s) {
 
 async function analyzeImage() {
   if (!b64) return;
+  if (!userApiKey) { alert('先にAPIキーを入力してください'); return; }
   document.getElementById('loading').style.display = 'flex';
   document.getElementById('err').style.display = 'none';
   document.getElementById('results').style.display = 'none';
   document.getElementById('analyze-btn').disabled = true;
 
   try {
-    const res = await fetch('/api/analyze', {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageData: b64, mediaType: mime })
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': userApiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } },
+            { type: 'text', text: 'あなたはSNS（ThreadsやX）投稿画像の専門評価者です。この画像を4項目で評価してください。必ずJSONのみで返答し、マークダウン記号は一切使わないこと。\n{"design":{"score":数値0-10,"reason":"評価理由（日本語1-2文）"},"comprehension":{"score":数値0-10,"reason":"評価理由（日本語1-2文）"},"interest":{"score":数値0-10,"reason":"評価理由（日本語1-2文）"},"trust":{"score":数値0-10,"reason":"評価理由（日本語1-2文）"},"improvements":["改善点1","改善点2","改善点3"],"overall_comment":"総合コメント2-3文"}\n評価基準: design=タイムラインで視線が止まるか, comprehension=1秒で内容理解できるか, interest=続きを読みたくなるか, trust=信用・共感できるか' }
+          ]
+        }]
+      })
     });
 
-    const j = await res.json();
-
-    if (!res.ok || j.error) {
-      throw new Error(j.error || '分析に失敗しました');
-    }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || '分析に失敗しました');
+    const text = data.content?.find(c => c.type === 'text')?.text || '';
+    const cleaned = text.replace(/```json|```/g, '').trim();
+    const j = JSON.parse(cleaned);
 
     const total = j.design.score + j.comprehension.score + j.interest.score + j.trust.score;
     const g = getGrade(total);
