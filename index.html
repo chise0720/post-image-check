@@ -114,45 +114,125 @@ footer{text-align:center;margin-top:32px;color:var(--gold);font-size:11px;font-w
         </div>
       </div>
 
-      <!-- Threads timeline -->
-      <div id="tl-threads" class="tl-mock" style="background:#FAFAFA;border:1px solid #E0E0E0">
-        <div class="tl-post-other" style="border-bottom:1px solid #EBEBEB">
-          <div class="row"><div class="avatar" style="background:#DDD"></div><div class="lines"><div class="line" style="width:70px;height:8px;background:#CCC"></div><div class="line" style="width:100%;height:7px;background:#E0E0E0"></div><div class="img-ph" style="background:#E5E5E5"></div></div></div>
-        </div>
-        <div class="tl-post-main" style="background:#FFF">
-          <div class="row">
-            <div class="avatar">✨</div>
-            <div class="info">
-              <div class="header-row"><span class="username" style="color:#333">@your_account</span><span class="time">たった今</span></div>
-              <div class="caption" style="color:#555">投稿テキストがここに入ります</div>
-              <div class="img-wrap"><img id="prev-threads" src="" alt="preview"></div>
-              <div class="actions"><span class="act" style="color:#999">💬 12</span><span class="act" style="color:#999">🔁 37</span><span class="act" style="color:#999">❤️ 214</span></div>
+      <!-- Threads timeline (realistic) -->
+      <div id="tl-threads" class="tl-mock" style="background:#fff;border:1px solid #DBDBDB;font-family:-apple-system,BlinkMacSystemFont,sans-serif">
+        <!-- 上の投稿（薄く） -->
+        <div style="padding:12px 16px;opacity:.4;border-bottom:1px solid #EFEFEF">
+          <div style="display:flex;gap:10px">
+            <div style="width:36px;height:36px;border-radius:50%;background:#DBDBDB;flex-shrink:0"></div>
+            <div style="flex:1">
+              <div style="width:80px;height:9px;background:#DBDBDB;border-radius:4px;margin-bottom:5px"></div>
+              <div style="width:100%;height:8px;background:#EFEFEF;border-radius:4px;margin-bottom:3px"></div>
+              <div style="width:65%;height:8px;background:#EFEFEF;border-radius:4px"></div>
             </div>
           </div>
         </div>
-        <div class="tl-post-other" style="border-top:1px solid #EBEBEB">
-          <div class="row"><div class="avatar" style="background:#DDD"></div><div class="lines"><div class="line" style="width:50px;height:8px;background:#CCC"></div><div class="line" style="width:100%;height:7px;background:#E0E0E0"></div></div></div>
+        <!-- メイン投稿 -->
+        <div style="padding:12px 16px;background:#fff;border-left:3px solid #C9A96E">
+          <div style="display:flex;gap:10px">
+            <div style="position:relative;flex-shrink:0">
+              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#C9A96E,#E8D5B0);display:flex;align-items:center;justify-content:center;font-size:14px">✨</div>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+                <span style="font-size:13px;font-weight:700;color:#000">your_account</span>
+                <span style="font-size:11px;color:#999">• たった今</span>
+              </div>
+              <div style="font-size:12px;color:#333;margin-bottom:8px;line-height:1.5">投稿テキストがここに入ります</div>
+              <div style="border-radius:10px;overflow:hidden;border:1px solid #DBDBDB">
+                <img id="prev-threads" src="" alt="preview" style="width:100%;display:block">
+              </div>
+              <div style="display:flex;gap:16px;margin-top:10px;padding-top:6px">
+                <span style="font-size:11px;color:#999;display:flex;align-items:center;gap:3px">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>12
+                </span>
+                <span style="font-size:11px;color:#999;display:flex;align-items:center;gap:3px">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>37
+                </span>
+                <span style="font-size:11px;color:#999;display:flex;align-items:center;gap:3px">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>214
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 下の投稿（薄く） -->
+        <div style="padding:12px 16px;opacity:.3;border-top:1px solid #EFEFEF">
+          <div style="display:flex;gap:10px">
+            <div style="width:36px;height:36px;border-radius:50%;background:#DBDBDB;flex-shrink:0"></div>
+            <div style="flex:1">
+              <div style="width:60px;height:9px;background:#DBDBDB;border-radius:4px;margin-bottom:5px"></div>
+              <div style="width:100%;height:8px;background:#EFEFEF;border-radius:4px"></div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- X timeline -->
-      <div id="tl-x" class="tl-mock" style="display:none;background:#000;border:1px solid #2F3336">
-        <div class="tl-post-other" style="border-bottom:1px solid #2F3336">
-          <div class="row"><div class="avatar" style="background:#333"></div><div class="lines"><div class="line" style="width:70px;height:8px;background:#444"></div><div class="line" style="width:100%;height:7px;background:#333"></div><div class="img-ph" style="background:#222"></div></div></div>
-        </div>
-        <div class="tl-post-main" style="background:#16181C">
-          <div class="row">
-            <div class="avatar">✨</div>
-            <div class="info">
-              <div class="header-row"><span class="username" style="color:#E7E9EA">@your_account</span><span class="time" style="color:#666">たった今</span></div>
-              <div class="caption" style="color:#9BA0A5">投稿テキストがここに入ります</div>
-              <div class="img-wrap" style="min-height:80px"><img id="prev-x" src="" alt="preview" style="width:100%;display:block;min-height:80px"></div>
-              <div class="actions"><span class="act" style="color:#555">💬 12</span><span class="act" style="color:#555">🔁 37</span><span class="act" style="color:#555">❤️ 214</span></div>
+      <!-- X timeline (realistic dark) -->
+      <div id="tl-x" class="tl-mock" style="display:none;background:#000;border:1px solid #2F3336;font-family:-apple-system,BlinkMacSystemFont,sans-serif">
+        <!-- 上の投稿（薄く） -->
+        <div style="padding:12px 16px;opacity:.35;border-bottom:1px solid #2F3336">
+          <div style="display:flex;gap:10px">
+            <div style="width:40px;height:40px;border-radius:50%;background:#2F3336;flex-shrink:0"></div>
+            <div style="flex:1">
+              <div style="display:flex;gap:6px;margin-bottom:4px">
+                <div style="width:70px;height:9px;background:#3F4446;border-radius:4px"></div>
+                <div style="width:50px;height:9px;background:#2F3336;border-radius:4px"></div>
+              </div>
+              <div style="width:100%;height:8px;background:#2F3336;border-radius:4px;margin-bottom:3px"></div>
+              <div style="width:70%;height:8px;background:#2F3336;border-radius:4px;margin-bottom:6px"></div>
+              <div style="height:52px;background:#1E2124;border-radius:8px"></div>
             </div>
           </div>
         </div>
-        <div class="tl-post-other" style="border-top:1px solid #2F3336">
-          <div class="row"><div class="avatar" style="background:#333"></div><div class="lines"><div class="line" style="width:50px;height:8px;background:#444"></div><div class="line" style="width:100%;height:7px;background:#333"></div></div></div>
+        <!-- メイン投稿 -->
+        <div style="padding:12px 16px;background:#16181C;border-left:3px solid #C9A96E">
+          <div style="display:flex;gap:10px">
+            <div style="flex-shrink:0">
+              <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#C9A96E,#E8D5B0);display:flex;align-items:center;justify-content:center;font-size:16px">✨</div>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1px">
+                <div style="display:flex;align-items:center;gap:4px">
+                  <span style="font-size:13px;font-weight:700;color:#E7E9EA">your_account</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#1D9BF0"><path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91-1.01-1.01-2.52-1.27-3.91-.81C14.67 2.88 13.43 2 12 2s-2.67.88-3.34 2.19c-1.39-.46-2.9-.2-3.91.81-1.01 1.01-1.27 2.52-.81 3.91C2.88 9.33 2 10.57 2 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91 1.01 1.01 2.52 1.27 3.91.81C9.33 21.12 10.57 22 12 22s2.67-.88 3.34-2.19c1.39.46 2.9.2 3.91-.81 1.01-1.01 1.27-2.52.81-3.91C21.12 14.67 22 13.43 22 12zm-6.16-1.08l-4.42 5.17a.75.75 0 01-1.06.09l-2.5-2.17a.75.75 0 011-.12l1.93 1.68 3.89-4.55a.75.75 0 011.16.95z"></path></svg>
+                </div>
+                <span style="font-size:11px;color:#666">たった今</span>
+              </div>
+              <div style="font-size:12px;color:#71767B;margin-bottom:1px">@your_account</div>
+              <div style="font-size:13px;color:#E7E9EA;margin-bottom:8px;line-height:1.5">投稿テキストがここに入ります</div>
+              <div style="border-radius:14px;overflow:hidden;border:1px solid #2F3336">
+                <img id="prev-x" src="" alt="preview" style="width:100%;display:block">
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:10px;max-width:240px">
+                <span style="font-size:12px;color:#536471;display:flex;align-items:center;gap:4px">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 7.501 3.58 7.501 8 0 4.41-3.01 8-7.5 8h-4.373C5.335 18 1.751 14.42 1.751 10zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.31 2.688 6 6.005 6h4.366c3.393 0 5.5-2.69 5.5-6 0-3.31-2.107-6-5.5-6z"></path></svg>12
+                </span>
+                <span style="font-size:12px;color:#536471;display:flex;align-items:center;gap:4px">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path></svg>37
+                </span>
+                <span style="font-size:12px;color:#536471;display:flex;align-items:center;gap:4px">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path></svg>214
+                </span>
+                <span style="font-size:12px;color:#536471;display:flex;align-items:center;gap:4px">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path></svg>1.2K
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 下の投稿（薄く） -->
+        <div style="padding:12px 16px;opacity:.3;border-top:1px solid #2F3336">
+          <div style="display:flex;gap:10px">
+            <div style="width:40px;height:40px;border-radius:50%;background:#2F3336;flex-shrink:0"></div>
+            <div style="flex:1">
+              <div style="display:flex;gap:6px;margin-bottom:4px">
+                <div style="width:70px;height:9px;background:#3F4446;border-radius:4px"></div>
+                <div style="width:40px;height:9px;background:#2F3336;border-radius:4px"></div>
+              </div>
+              <div style="width:100%;height:8px;background:#2F3336;border-radius:4px"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
