@@ -128,7 +128,7 @@ footer{text-align:center;margin-top:32px;color:var(--gold);font-size:11px;font-w
             <div class="info">
               <div class="header-row"><span class="username" style="color:#E7E9EA">@your_account</span><span class="time" style="color:#666">たった今</span></div>
               <div class="caption" style="color:#9BA0A5">投稿テキストがここに入ります</div>
-              <div class="img-wrap"><img id="prev-x" src="" alt="preview"></div>
+              <div class="img-wrap" style="min-height:80px"><img id="prev-x" src="" alt="preview" style="width:100%;display:block;min-height:80px"></div>
               <div class="actions"><span class="act" style="color:#555">💬 12</span><span class="act" style="color:#555">🔁 37</span><span class="act" style="color:#555">❤️ 214</span></div>
             </div>
           </div>
@@ -222,6 +222,13 @@ function switchTab(tab) {
   document.getElementById('tab-threads').style.color = isThreads ? '#fff' : 'var(--gold-d)';
   document.getElementById('tab-x').style.background = isThreads ? '#EAD9B8' : 'var(--gold)';
   document.getElementById('tab-x').style.color = isThreads ? 'var(--gold-d)' : '#fff';
+  // Re-set image src to force render after display change
+  const fullPrev = document.getElementById('full-prev');
+  if (fullPrev && fullPrev.src && fullPrev.src !== window.location.href) {
+    const src = fullPrev.src;
+    document.getElementById('prev-threads').src = src;
+    document.getElementById('prev-x').src = src;
+  }
 }
 
 function resetApp() {
