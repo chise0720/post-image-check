@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ 投稿画像チェックアプリ</title>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C9A96E;--gold-d:#A07840;--gold-l:#E8D5B0;--beige:#F5EDD8;--cream:#FAF6EE;--text:#4A3728;--text-l:#7A6050;--card:#FFFCF5;--border:#E2C97E}
+body{font-family:'M PLUS Rounded 1c',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding:20px 16px 48px}
+.header{text-align:center;margin-bottom:28px}
+.header h1{font-size:clamp(20px,5vw,30px);font-weight:800;color:var(--text);letter-spacing:.04em}
+.gold-line{width:50px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:10px auto}
+.sub{font-size:12px;color:var(--gold-d);font-weight:500}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 2px 12px rgba(201,169,110,.07)}
+.card-title{font-size:13px;font-weight:700;color:var(--gold-d);display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.drop-zone{border:2px dashed var(--border);border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;background:var(--card);transition:all .2s}
+.drop-zone:hover{border-color:var(--gold);background:#FAF0DD}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#fff;border:none;border-radius:99px;padding:14px 24px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;width:100%;box-shadow:0 4px 14px rgba(160,120,64,.25);transition:opacity .2s}
+.btn-gold:disabled{opacity:.6;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--gold-d);border:1.5px solid var(--border);border-radius:99px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tab-btn{padding:4px 11px;border-radius:99px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:inherit}
+.score-bar-bg{flex:1;height:8px;background:#EAD9B8;border-radius:99px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--gold-l));transition:width 1.2s ease;width:0}
+.score-num{font-size:18px;font-weight:800;color:var(--gold);min-width:40px;text-align:right}
+.score-num span{font-size:11px;color:var(--gold-d)}
+.imp-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--cream);border-radius:10px;border:1px solid var(--border);margin-bottom:8px}
+.imp-num{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-l));color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tag{display:inline-block;padding:5px 16px;border-radius:99px;font-size:13px;font-weight:700;color:#fff}
+.error-box{padding:10px 14px;background:#FFF5F5;border:1px solid #F5C0C0;border-radius:10px;color:#C05050;font-size:12px;margin-top:8px}
+.loading-overlay{position:fixed;inset:0;background:rgba(250,246,238,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100}
+.spinner{width:48px;height:48px;border:3px solid var(--gold-l);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+#main-content{display:none}#results{display:none}#loading{display:none}
+footer{text-align:center;margin-top:32px;color:var(--gold);font-size:11px;font-weight:500}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto">
+<div class="header">
+  <div style="font-size:26px;margin-bottom:4px">✨</div>
+  <h1>投稿画像チェックアプリ</h1>
+  <div class="gold-line"></div>
+  <p class="sub">SNSで本当に目に止まる画像か確認しよう</p>
+</div>
+
+<div id="upload-section">
+  <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+    <div style="font-size:40px;margin-bottom:10px">🖼️</div>
+    <h2 style="font-size:15px;font-weight:700;margin-bottom:4px">チェックしたい画像をここにドロップ</h2>
+    <p style="font-size:12px;color:var(--gold-d)">またはクリックして画像を選択</p>
+    <input type="file" id="file-input" accept="image/*" style="display:none">
+  </div>
+</div>
+
+<div id="loading" class="loading-overlay">
+  <div class="spinner"></div>
+  <p style="font-weight:700;color:var(--gold-d);font-size:15px">✨ AIが画像を分析中...</p>
+  <p style="font-size:12px;color:var(--text-l);margin-top:6px">少々お待ちください</p>
+</div>
+
+<div id="main-content">
+  <div class="grid2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title">📱 タイムラインイメージ
+        <div style="margin-left:auto;display:flex;gap:5px">
+          <button class="tab-btn" id="tab-t" onclick="switchTab('t')" style="background:var(--gold);color:#fff">Threads</button>
+          <button class="tab-btn" id="tab-x" onclick="switchTab('x')" style="background:#EAD9B8;color:var(--gold-d)">𝕏</button>
+        </div>
+      </div>
+      <div id="tl-t" style="background:#FAFAFA;border-radius:10px;overflow:hidden;border:1px solid #E0E0E0">
+        <div style="padding:10px;border-bottom:1px solid #EBEBEB;opacity:.3"><div style="display:flex;gap:7px"><div style="width:28px;height:28px;border-radius:50%;background:#DDD;flex-shrink:0"></div><div style="flex:1"><div style="width:70px;height:8px;background:#CCC;border-radius:4px;margin-bottom:4px"></div><div style="width:100%;height:7px;background:#E0E0E0;border-radius:3px;margin-bottom:3px"></div><div style="height:50px;background:#E5E5E5;border-radius:6px;margin-top:4px"></div></div></div></div>
+        <div style="padding:10px;background:#FFF;border-left:3px solid var(--gold)">
+          <div style="display:flex;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-l));flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px">✨</div>
+            <div style="flex:1">
+              <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;font-weight:700;color:#333">@your_account</span><span style="font-size:9px;color:#999">たった今</span></div>
+              <div style="font-size:10px;color:#555;margin-bottom:5px">投稿テキストがここに入ります</div>
+              <div style="border-radius:8px;overflow:hidden;border:2px solid var(--gold)"><img id="prev-t" src="" alt="" style="width:100%;display:block"></div>
+              <div style="display:flex;gap:12px;margin-top:6px"><span style="font-size:9px;color:#999">💬 12</span><span style="font-size:9px;color:#999">🔁 37</span><span style="font-size:9px;color:#999">❤️ 214</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:10px;border-top:1px solid #EBEBEB;opacity:.2"><div style="display:flex;gap:7px"><div style="width:28px;height:28px;border-radius:50%;background:#DDD;flex-shrink:0"></div><div style="flex:1"><div style="width:50px;height:8px;background:#CCC;border-radius:4px;margin-bottom:4px"></div><div style="width:100%;height:7px;background:#E0E0E0;border-radius:3px"></div></div></div></div>
+      </div>
+      <div id="tl-x" style="display:none;background:#000;border-radius:10px;overflow:hidden;border:1px solid #2F3336">
+        <div style="padding:10px;border-bottom:1px solid #2F3336;opacity:.3"><div style="display:flex;gap:7px"><div style="width:28px;height:28px;border-radius:50%;background:#333;flex-shrink:0"></div><div style="flex:1"><div style="width:70px;height:8px;background:#444;border-radius:4px;margin-bottom:4px"></div><div style="width:100%;height:7px;background:#333;border-radius:3px;margin-bottom:3px"></div><div style="height:50px;background:#222;border-radius:6px;margin-top:4px"></div></div></div></div>
+        <div style="padding:10px;background:#16181C;border-left:3px solid var(--gold)">
+          <div style="display:flex;gap:7px">
+            <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-l));flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px">✨</div>
+            <div style="flex:1">
+              <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;font-weight:700;color:#E7E9EA">@your_account</span><span style="font-size:9px;color:#666">たった今</span></div>
+              <div style="font-size:10px;color:#9BA0A5;margin-bottom:5px">投稿テキストがここに入ります</div>
+              <div style="border-radius:8px;overflow:hidden;border:2px solid var(--gold)"><img id="prev-x" src="" alt="" style="width:100%;display:block"></div>
+              <div style="display:flex;gap:12px;margin-top:6px"><span style="font-size:9px;color:#555">💬 12</span><span style="font-size:9px;color:#555">🔁 37</span><span style="font-size:9px;color:#555">❤️ 214</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:10px;border-top:1px solid #2F3336;opacity:.2"><div style="display:flex;gap:7px"><div style="width:28px;height:28px;border-radius:50%;background:#333;flex-shrink:0"></div><div style="flex:1"><div style="width:50px;height:8px;background:#444;border-radius:4px;margin-bottom:4px"></div><div style="width:100%;height:7px;background:#333;border-radius:3px"></div></div></div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card">
+        <div class="card-title">🖼️ アップロード画像</div>
+        <img id="full-prev" src="" alt="" style="width:100%;border-radius:10px;border:1px solid var(--border);display:block">
+        <button class="btn-ghost" onclick="resetApp()" style="margin-top:10px;width:100%">別の画像を選ぶ</button>
+      </div>
+      <button class="btn-gold" id="analyze-btn" onclick="analyzeImage()">✨ 画像を分析する</button>
+      <div id="err" class="error-box" style="display:none"></div>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="grid2" style="margin-bottom:12px">
+      <div class="card"><div class="card-title">✨ ✅ デザイン性</div><div style="font-size:11px;color:var(--gold-d);margin-bottom:8px">タイムラインで目が止まるか</div><div style="display:flex;align-items:center;gap:10px"><div class="score-bar-bg"><div class="score-bar-fill" id="b-d"></div></div><div class="score-num" id="n-d">0<span>/10</span></div></div><p id="r-d" style="font-size:12px;color:var(--text-l);line-height:1.6;margin-top:6px"></p></div>
+      <div class="card"><div class="card-title">💡 ✅ 理解度</div><div style="font-size:11px;color:var(--gold-d);margin-bottom:8px">１秒で内容が理解できるか</div><div style="display:flex;align-items:center;gap:10px"><div class="score-bar-bg"><div class="score-bar-fill" id="b-c"></div></div><div class="score-num" id="n-c">0<span>/10</span></div></div><p id="r-c" style="font-size:12px;color:var(--text-l);line-height:1.6;margin-top:6px"></p></div>
+      <div class="card"><div class="card-title">💖 ✅ 興味性</div><div style="font-size:11px;color:var(--gold-d);margin-bottom:8px">続きを読みたくなるか</div><div style="display:flex;align-items:center;gap:10px"><div class="score-bar-bg"><div class="score-bar-fill" id="b-i"></div></div><div class="score-num" id="n-i">0<span>/10</span></div></div><p id="r-i" style="font-size:12px;color:var(--text-l);line-height:1.6;margin-top:6px"></p></div>
+      <div class="card"><div class="card-title">🌸 ✅ 信頼・共感度</div><div style="font-size:11px;color:var(--gold-d);margin-bottom:8px">信用できる・共感できるか</div><div style="display:flex;align-items:center;gap:10px"><div class="score-bar-bg"><div class="score-bar-fill" id="b-t"></div></div><div class="score-num" id="n-t">0<span>/10</span></div></div><p id="r-t" style="font-size:12px;color:var(--text-l);line-height:1.6;margin-top:6px"></p></div>
+    </div>
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card" style="background:linear-gradient(135deg,#FAF0DD,var(--beige));text-align:center;padding:24px 16px">
+        <div style="font-size:13px;font-weight:700;color:var(--gold-d);margin-bottom:6px">🏆 総合点</div>
+        <div id="total" style="font-size:54px;font-weight:800;color:var(--gold);line-height:1">0</div>
+        <div style="font-size:15px;color:var(--gold-d);margin-bottom:12px">/ 40点</div>
+        <span id="grade" class="tag"></span>
+        <p id="comment" style="font-size:12px;color:var(--text-l);line-height:1.7;text-align:left;margin-top:14px"></p>
+      </div>
+      <div class="card"><div class="card-title">💡 さらに良くなる改善点</div><div id="imps"></div></div>
+    </div>
+    <div style="text-align:center;padding-bottom:8px">
+      <button class="btn-ghost" onclick="analyzeImage()" style="margin-right:10px">🔄 もう一度分析</button>
+      <button class="btn-ghost" onclick="resetApp()">別の画像を試す</button>
+    </div>
+  </div>
+</div>
+<footer>✨ 投稿画像チェックアプリ ✨</footer>
+</div>
+<script>
+let b64='',mime='image/jpeg';
+const dz=document.getElementById('drop-zone');
+document.getElementById('file-input').addEventListener('change',e=>{const f=e.target.files[0];if(f)load(f);});
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.style.borderColor='var(--gold)';});
+dz.addEventListener('dragleave',()=>{dz.style.borderColor='var(--border)';});
+dz.addEventListener('drop',e=>{e.preventDefault();dz.style.borderColor='var(--border)';const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))load(f);});
+function load(f){
+  mime=f.type||'image/jpeg';
+  const r=new FileReader();
+  r.onload=e=>{const u=e.target.result;b64=u.split(',')[1];['prev-t','prev-x','full-prev'].forEach(id=>document.getElementById(id).src=u);document.getElementById('upload-section').style.display='none';document.getElementById('main-content').style.display='block';document.getElementById('results').style.display='none';};
+  r.readAsDataURL(f);
+}
+function switchTab(t){
+  const isT=t==='t';
+  document.getElementById('tl-t').style.display=isT?'block':'none';
+  document.getElementById('tl-x').style.display=isT?'none':'block';
+  document.getElementById('tab-t').style.background=isT?'var(--gold)':'#EAD9B8';
+  document.getElementById('tab-t').style.color=isT?'#fff':'var(--gold-d)';
+  document.getElementById('tab-x').style.background=isT?'#EAD9B8':'var(--gold)';
+  document.getElementById('tab-x').style.color=isT?'var(--gold-d)':'#fff';
+}
+function resetApp(){document.getElementById('upload-section').style.display='block';document.getElementById('main-content').style.display='none';document.getElementById('results').style.display='none';document.getElementById('err').style.display='none';b64='';document.getElementById('file-input').value='';}
+function grade(s){if(s>=36)return{l:'最高！バズる予感 ✨',c:'#C9A96E'};if(s>=28)return{l:'とても良い 👏',c:'#A07840'};if(s>=20)return{l:'まずまず 🌸',c:'#E8A0A0'};return{l:'改善の余地あり 💪',c:'#7A6050'};}
+async function analyzeImage(){
+  if(!b64)return;
+  document.getElementById('loading').style.display='flex';
+  document.getElementById('err').style.display='none';
+  document.getElementById('results').style.display='none';
+  try{
+    const res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageData:b64,mediaType:mime})});
+    if(!res.ok)throw new Error('分析に失敗しました');
+    const j=await res.json();
+    const total=j.design.score+j.comprehension.score+j.interest.score+j.trust.score;
+    const g=grade(total);
+    setTimeout(()=>{document.getElementById('b-d').style.width=(j.design.score*10)+'%';},100);
+    setTimeout(()=>{document.getElementById('b-c').style.width=(j.comprehension.score*10)+'%';},200);
+    setTimeout(()=>{document.getElementById('b-i').style.width=(j.interest.score*10)+'%';},300);
+    setTimeout(()=>{document.getElementById('b-t').style.width=(j.trust.score*10)+'%';},400);
+    document.getElementById('n-d').innerHTML=j.design.score+'<span>/10</span>';
+    document.getElementById('n-c').innerHTML=j.comprehension.score+'<span>/10</span>';
+    document.getElementById('n-i').innerHTML=j.interest.score+'<span>/10</span>';
+    document.getElementById('n-t').innerHTML=j.trust.score+'<span>/10</span>';
+    document.getElementById('r-d').textContent=j.design.reason;
+    document.getElementById('r-c').textContent=j.comprehension.reason;
+    document.getElementById('r-i').textContent=j.interest.reason;
+    document.getElementById('r-t').textContent=j.trust.reason;
+    document.getElementById('total').textContent=total;
+    const gtag=document.getElementById('grade');gtag.textContent=g.l;gtag.style.background=g.c;
+    document.getElementById('comment').textContent=j.overall_comment;
+    document.getElementById('imps').innerHTML=j.improvements.map((v,i)=>`<div class="imp-item"><div class="imp-num">${i+1}</div><p style="font-size:12px;color:var(--text);line-height:1.6;margin:0">${v}</p></div>`).join('');
+    document.getElementById('results').style.display='block';
+  }catch(e){
+    document.getElementById('err').textContent='エラーが発生しました。もう一度お試しください。';
+    document.getElementById('err').style.display='block';
+  }finally{
+    document.getElementById('loading').style.display='none';
+  }
+}
+</script>
+</body>
+</html>
